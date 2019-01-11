@@ -1,0 +1,9 @@
+﻿  BigInteger.cpp
+c:\users\masa_\source\repos\livelib\livelib\biginteger.cpp(123): warning C4018: <: несоответствие типов со знаком и без знака
+c:\users\masa_\source\repos\livelib\livelib\biginteger.cpp(127): warning C4244: +=: преобразование "double" в "livelib::size_p", возможна потеря данных
+c:\users\masa_\source\repos\livelib\livelib\biginteger.cpp(145): warning C4018: <: несоответствие типов со знаком и без знака
+c:\users\masa_\source\repos\livelib\livelib\biginteger.cpp(150): warning C4244: +=: преобразование "double" в "livelib::size_p", возможна потеря данных
+  Main.cpp
+  livelib.cpp
+  Создание кода...
+  LiveLib.vcxproj -> C:\Users\masa_\source\repos\LiveLib\Debug\LiveLib.exe
