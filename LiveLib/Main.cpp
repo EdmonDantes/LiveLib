@@ -9,16 +9,30 @@ Please email dantes2104@gmail.com if you would like permission to do something w
 using namespace livelib;
 using namespace std;
 int main() {
-	BigInteger a = BigInteger::random(40000000);
-	BigInteger b = BigInteger::random(40000000);
+	BigInteger a = BigInteger::random(400000);
+	BigInteger b = BigInteger::random(400000);
 
-	auto s = getTime();
+	double sum = 0;
+	int i = 0;
+	int count_iter = 1000;
+	int count_output = 10;
 
-	BigInteger c = a + b;
+	for (; i < count_iter; i++) {
+		auto s = getTime();
 
-	auto e = getTime();
+		BigInteger c = a + b;
 
-	cout << getTimeM(s, e) << "\n";
+		auto e = getTime();
+
+		sum += getTimeN(s, e);
+
+		if (i % (count_iter / count_output) == 0 && i != 0)
+			cout << "Middle time for iteration: " << i << " = " << sum / i << " ns\n";
+	}
+
+	
+
+	//cout << getTimeN(s, e) << "\n";
 	//cout << c.toString() << "\n";
 
 	system("pause");

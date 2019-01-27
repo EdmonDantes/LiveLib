@@ -15,11 +15,15 @@ namespace livelib {
 #define _X64
 	typedef unsigned long long size_p; // size of values part
 	typedef unsigned long long size_v; // size of value
+
+	#define SIZE_V_MAX ULLONG_MAX
 #else
 #ifdef _WIN32
 #define _X32
 	typedef unsigned long size_p; // size of values part
 	typedef unsigned long size_v; // size of value
+
+	#define SIZE_V_MAX ULONG_MAX
 #endif // _WIN32 
 #endif // _WIN64
 

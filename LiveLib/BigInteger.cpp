@@ -82,7 +82,9 @@ namespace livelib {
 
 			while (_out[i] > BigInteger::max_size_of_part) {
 				_out[i + 1] -= 1;
-				_out[i] += BigInteger::max_size_of_part;
+				size_p tmp = _out[i] - 1;
+				_out[i] = SIZE_V_MAX;
+				_out[i] -= tmp;
 			}
 		}
 
@@ -90,9 +92,12 @@ namespace livelib {
 			if (a_size == min_size) _out[i] -= b[i];
 			else _out[i] += a[i];
 			_out[i + 1] = 0;
+
 			while (_out[i] > BigInteger::max_size_of_part) {
 				_out[i + 1] -= 1;
-				_out[i] += BigInteger::max_size_of_part;
+				size_p tmp = _out[i] - 1;
+				_out[i] = SIZE_V_MAX;
+				_out[i] -= tmp;
 			}
 		}
 
@@ -211,22 +216,17 @@ namespace livelib {
 		}
 		else if (!this->isNegate && b.isNegate) {
 			_sub(this->value, this->size, b.value, b.size, &out, &out_size, &out_real_size);
-			if (out[out_size - 1] == 0)
-				out_size--;
-			else {
-				while (out[out_size - 1] > BigInteger::max_size_of_part) out[out_size - 1] += BigInteger::max_size_of_part;
+			if (out[out_size - 1] > BigInteger::max_size_of_part) {
 				isNegate = true;
 			}
+			out_size--;
 		}
 		else if (this->isNegate && !b.isNegate) {
 			_sub(this->value, this->size, b.value, b.size, &out, &out_size, &out_real_size);
-			if (out[out_size - 1] == 0) {
-				out_size--;
+			if (out[out_size - 1] <= BigInteger::max_size_of_part) {
 				isNegate = true;
-			} else {
-				while (out[out_size - 1] > BigInteger::max_size_of_part) out[out_size - 1] += BigInteger::max_size_of_part;
-				
 			}
+			out_size--;
 		}
 		else if (this->isNegate && b.isNegate) {
 			_sum(this->value, this->size, b.value, b.size, &out, &out_size, &out_real_size);
@@ -246,12 +246,10 @@ namespace livelib {
 		bool isNegate = false;
 		if (!this->isNegate && !b.isNegate) {
 			_sub(this->value, this->size, b.value, b.size, &out, &out_size, &out_real_size);
-			if (out[out_size - 1] == 0)
-				out_size--;
-			else {
-				while (out[out_size - 1] > BigInteger::max_size_of_part) out[out_size - 1] += BigInteger::max_size_of_part;
+			if (out[out_size - 1] > BigInteger::max_size_of_part) {
 				isNegate = true;
 			}
+			out_size--;
 		}
 		else if (!this->isNegate && b.isNegate) {
 			_sum(this->value, this->size, b.value, b.size, &out, &out_size, &out_real_size);
@@ -261,13 +259,10 @@ namespace livelib {
 		}
 		else if (this->isNegate && b.isNegate) {
 			_sub(this->value, this->size, b.value, b.size, &out, &out_size, &out_real_size);
-			if (out[out_size - 1] == 0) {
-				out_size--;
+			if (out[out_size - 1] <= BigInteger::max_size_of_part) {
 				isNegate = true;
 			}
-			else {
-				while (out[out_size - 1] > BigInteger::max_size_of_part) out[out_size - 1] += BigInteger::max_size_of_part;
-			}
+			out_size--;
 		}
 		else return BigInteger();
 
