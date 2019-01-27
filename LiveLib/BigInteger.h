@@ -13,18 +13,23 @@ namespace livelib {
 	class BigInteger {
 	private:
 #ifdef _X64
-		const static size_p max_size_of_part = 1000000000;
-		const static length_p max_length_of_part = 9;
+		const static size_p max_size_of_part = 0xfffffff;
+		const static length_p max_length_of_part = 10;
+		const static length_p bit_shift = 32;
+		
 #else
-		const static size_p max_size_of_part = 10000;
-		const static length_p max_length_of_part = 4;
+		const static size_p max_size_of_part = 0xffff;
+		const static length_p max_length_of_part = 5;
+		const static length_p bit_shift = 16;
 #endif
-		size_p* value; // Array for save data about number
-		size_v size; // Number`s size
-		size_v real_size; // Array`s size. For lesser use memory
-		bool isNegate; // True if number less than 0
 
-		BigInteger(size_p* value, size_v size, bool isNegate);
+		static size_p max_dec_size_of_part;
+
+		size_p* value = 0; // Array for save data about number
+		size_v size = 0; // Number`s size
+		size_v real_size = 0; // Array`s size. For lesser use memory
+		bool isNegate = false; // True if number less than 0
+
 		BigInteger(size_p* value, size_v size, size_v real_size, bool isNegate);
 
 		/*
@@ -33,7 +38,7 @@ namespace livelib {
 			@a_len and @b_len must be > 0
 			Return number with length = max(@a_len, @b_len) + 1
 		*/
-		static size_p* _sum(size_p* a, size_v a_len, size_p* b, size_v b_len);
+		static void _sum(size_p* a, size_v a_size, size_p* b, size_v b_size, size_p** out, size_v* out_size, size_v* out_real_size);
 
 		/*
 			_minus(a, a_len, b, b_len)
@@ -42,7 +47,7 @@ namespace livelib {
 			Return number with length = max(@a_len, @b_len) + 1
 			If @a > @b return @a - @b else return @b - @a
 		*/
-		static size_p* _sub(size_p* a, size_v a_len, size_p* b, size_v b_len);
+		static void _sub(size_p* a, size_v a_size, size_p* b, size_v b_size, size_p** out, size_v* out_size, size_v* out_real_size);
 
 	public:
 		BigInteger(); // Create NaN number
@@ -50,13 +55,15 @@ namespace livelib {
 		BigInteger(const BigInteger&); // Copy constructor
 
 		// Constructor for create numbers
-		BigInteger(const std::string&);
+		BigInteger(std::string&);
 		BigInteger(const char*);
+
+		~BigInteger();
 		
 
 		// Arithmetic operators
-		BigInteger& operator + (const BigInteger&);
-		BigInteger& operator - (const BigInteger&);
+		BigInteger operator + (const BigInteger&);
+		BigInteger operator - (const BigInteger&);
 		BigInteger& operator * (const BigInteger&);
 		BigInteger& operator / (const BigInteger&);
 		BigInteger& operator % (const BigInteger&);
@@ -85,10 +92,10 @@ namespace livelib {
 		bool isNegative();
 
 		// Return number
-		std::string& toString();
+		std::string toString();
 
 		//Create random number
-		static BigInteger& random(size_v length);
+		static BigInteger random(size_v length);
 	};
 }
 #endif

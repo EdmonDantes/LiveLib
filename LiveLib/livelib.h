@@ -35,5 +35,8 @@ namespace livelib {
 	
 	typedef int8_t length_p;
 	#define LIVE_LIB_ERROR_WRONG_STRING "Live Lib: ERROR => Wrong string"
+	#define getTime() chrono::steady_clock::now()
+	#define getTimeN(s, e) chrono::duration_cast<std::chrono::nanoseconds>(e - s).count()
+	#define getTimeM(s, e) chrono::duration_cast<std::chrono::milliseconds>(e - s).count()
 }
 #endif

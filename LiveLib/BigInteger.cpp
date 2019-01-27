@@ -11,11 +11,7 @@ namespace livelib {
 
 	//------------------Private Section------------\\
 
-	BigInteger::BigInteger(size_p* value, size_v size, bool isNegate = false) {
-		this->value = value;
-		this->real_size = this->size = size;
-		this->isNegate = isNegate;
-	}
+	size_p BigInteger::max_dec_size_of_part = floor(pow(10, floor(log10(BigInteger::max_size_of_part))));
 
 	BigInteger::BigInteger(size_p* value, size_v size, size_v real_size, bool isNegate = false) {
 		this->value = value;
@@ -24,75 +20,84 @@ namespace livelib {
 		this->isNegate = isNegate;
 	}
 
-	size_p* BigInteger::_sum(size_p* a, size_v a_len, size_p* b, size_v b_len) {
-		size_v min_len = a_len <= b_len ? a_len : b_len;
-		size_v max_len = a_len <= b_len ? b_len : a_len;
-		size_p* min_number = a_len < b_len ? a : b;
-		size_p* max_number = a_len < b_len ? b : a;
-
-		size_v out_len = max_len + 1;
-
-		size_p* out = new size_p[out_len];
-		out[0] = 0;
-
-		for (size_v i = 0; i < min_len; i++) {
-			size_p tmp = min_number[i] + max_number[i];
-			out[i] += tmp % BigInteger::max_size_of_part;
-			out[i + 1] = tmp / BigInteger::max_size_of_part;
-		}
-
-		for (size_v i = min_len; i < max_len; i++) {
-			out[i] += max_number[i];
-			out[i + 1] = out[i] / BigInteger::max_size_of_part;
-			out[i] %= BigInteger::max_size_of_part;
-		}
-
-		return out;
-	}
-
-	size_p* BigInteger::_sub(size_p* a, size_v a_len, size_p* b, size_v b_len) {
-		size_v min_len;
-		size_v max_len;
+	void BigInteger::_sum(size_p* a, size_v a_size, size_p* b, size_v b_size, size_p** out, size_v* out_size, size_v* out_real_size) {
+		size_v min_size;
+		size_v max_size;
 		size_p* min_number;
 		size_p* max_number;
 
-		if (a_len < b_len || (a_len == b_len && a[a_len - 1] < b[b_len - 1])) {
-			min_len = a_len;
-			max_len = b_len;
+		if (a_size < b_size) {
+			min_size = a_size;
+			max_size = b_size;
 			min_number = a;
 			max_number = b;
 		}
 		else {
-			min_len = b_len;
-			max_len = a_len;
+			min_size = b_size;
+			max_size = a_size;
 			min_number = b;
 			max_number = a;
 		}
 
-		size_p* out = new size_p[max_len + 1];
-		out[0] = 0;
+		size_p* _out = new size_p[max_size + 1];
+		_out[0] = 0;
 
-		for (size_v i = 0; i < min_len; i++) {
-			out[i] += max_number[i] - min_number[i];
+		for (size_v i = 0; i < min_size; i++) {
+			_out[i] += min_number[i] + max_number[i];
+			_out[i + 1] = _out[i] >> BigInteger::bit_shift;
+			_out[i] = _out[i] & BigInteger::max_size_of_part;
+		}
 
-			out[i + 1] = 0;
+		for (size_v i = min_size; i < max_size; i++) {
+			_out[i] += max_number[i];
+			_out[i + 1] = _out[i] >> BigInteger::bit_shift;
+			_out[i] = _out[i] & BigInteger::max_size_of_part;
+		}
 
-			while (out[i] > BigInteger::max_size_of_part) {
-				out[i + 1] -= 1;
-				out[i] += BigInteger::max_size_of_part;
+		*out = _out;
+		*out_real_size = max_size + 1;
+		while (_out[max_size] == 0) max_size--;
+		*out_size = max_size + 1;
+	}
+
+	void BigInteger::_sub(size_p* a, size_v a_size, size_p* b, size_v b_size, size_p** out, size_v* out_size, size_v* out_real_size) {
+		size_v min_size;
+		size_v max_size;
+
+		if (a_size < b_size || (a_size == b_size && a[a_size - 1] < b[b_size - 1])) {
+			min_size = a_size;
+			max_size = b_size;
+		}
+		else {
+			min_size = b_size;
+			max_size = a_size;
+		}
+
+		size_p* _out = new size_p[max_size + 1];
+		_out[0] = 0;
+
+		for (size_v i = 0; i < min_size; i++) {
+			_out[i] += a[i] - b[i];
+			_out[i + 1] = 0;
+
+			while (_out[i] > BigInteger::max_size_of_part) {
+				_out[i + 1] -= 1;
+				_out[i] += BigInteger::max_size_of_part;
 			}
 		}
 
-		for (size_v i = 0; i < max_len; i++) {
-			out[i] += max_number[i];
-			out[i + 1] = 0;
-			while (out[i] > BigInteger::max_size_of_part) {
-				out[i + 1] -= 1;
-				out[i] += BigInteger::max_size_of_part;
+		for (size_v i = min_size; i < max_size; i++) {
+			if (a_size == min_size) _out[i] -= b[i];
+			else _out[i] += a[i];
+			_out[i + 1] = 0;
+			while (_out[i] > BigInteger::max_size_of_part) {
+				_out[i + 1] -= 1;
+				_out[i] += BigInteger::max_size_of_part;
 			}
 		}
 
-		return out;
+		*out = _out;
+		*out_size = *out_real_size = max_size + 1;
 	}
 
 
@@ -117,23 +122,39 @@ namespace livelib {
 		}
 	}
 
-	BigInteger::BigInteger(const std::string& str) {
+	BigInteger::BigInteger(std::string& str) {
 		if (str.length() < 1) throw LIVE_LIB_ERROR_WRONG_STRING;
 
 		int str_index = 0;
 		if (str[0] == '-' || str[0] == '-') this->isNegate = ++str_index;
 
-		this->real_size = this->size = (str.length() - str_index) / this->max_length_of_part + ((str.length() - str_index) % this->max_length_of_part > 0 ? 1 : 0);
+		size_v size = (str.length() - str_index) / (BigInteger::max_length_of_part - 1) + ((str.length() - str_index) % (BigInteger::max_length_of_part - 1) > 0 ? 1 : 0);
 
-		this->value = new size_p[this->real_size];
+		size_p* value = new size_p[size];
 
-		for (int j = 0; str_index < str.length(); str_index++) {
-			if (j >= this->max_length_of_part) j = 0;
-			if (j == 0) this->value[str_index / this->max_length_of_part] = 0;
-
-			this->value[str_index / this->max_length_of_part] += (str[str_index] - '0') * pow(10, j++);
+		size_v j = 0;
+		size_p number = 0;
+		length_p number_length = 0;
+		for (int i = 0; i < str.length() - str_index; i++) {
+			size_p tmp = number + (str[str.length() - i - 1] - '0') * pow(10, number_length);
+			if (tmp < BigInteger::max_size_of_part && number_length < BigInteger::max_length_of_part) {
+				number = tmp;
+				number_length++;
+			}
+			else {
+				value[j++] = number;
+				number_length = 0;
+				number = (str[str.length() - i - 1] - '0') * pow(10, number_length);
+			}
 		}
 
+		if (number > 0) {
+			value[j++] = number;
+		}
+
+		this->value = value;
+		this->size = j;
+		this->real_size = size;
 	}
 
 	BigInteger::BigInteger(const char* str) {
@@ -144,60 +165,113 @@ namespace livelib {
 		int str_index = 0;
 		if (str[0] == '-' || str[0] == '-') this->isNegate = ++str_index;
 
-		this->real_size = this->size = (str_length - str_index) / this->max_length_of_part + ((str_length - str_index) % this->max_length_of_part > 0 ? 1 : 0);
+		size_v size = (str_length - str_index) / (BigInteger::max_length_of_part - 1) + ((str_length - str_index) % (BigInteger::max_length_of_part - 1) > 0 ? 1 : 0);
 
-		this->value = new size_p[this->real_size];
+		size_p* value = new size_p[size];
 
-		length_p j = 0;
-		for (size_v i = 0; i < str_length - str_index; i++) {
-			if (j >= this->max_length_of_part) j = 0;
-
-			if (j == 0) this->value[i / this->max_length_of_part] = 0;
-
-			this->value[i / this->max_length_of_part] += (str[str_length - i - 1] - '0') * pow(10, j++);
+		size_v j = 0;
+		size_p number = 0;
+		length_p number_length = 0;
+		for (int i = 0; i < str_length - str_index; i++) {
+			size_p tmp = number + (str[str_length - i - 1] - '0') * pow(10, number_length);
+			if (tmp < BigInteger::max_size_of_part && number_length < BigInteger::max_length_of_part) {
+				number = tmp;
+				number_length++;
+			}
+			else {
+				value[j++] = number;
+				number_length = 0;
+				number = (str[str_length - i - 1] - '0') * pow(10, number_length);
+			}
 		}
+
+		if (number > 0) {
+			value[j++] = number;
+		}
+
+		this->value = value;
+		this->size = j;
+		this->real_size = size;
 	}
 
-	BigInteger& BigInteger::operator + (const BigInteger& b) {
-		if (this->size < 1 || b.size < 1) return *(new BigInteger());
+	BigInteger::~BigInteger() {
+		if (this->value != 0) delete[] this->value;
+	}
+
+	BigInteger BigInteger::operator + (const BigInteger& b) {
+		if (this->size < 1 || b.size < 1) return BigInteger();
 		
+		size_p* out = 0;
+		size_v out_size = 0;
+		size_v out_real_size = 0;
+		bool isNegate = false;
+
 		if (!this->isNegate && !b.isNegate) {
-			size_p* val = _sum(this->value, this->size, b.value, b.size);
-			size_v val_len = (this->size > b.size ? this->size : b.size) + 1;
-			if (val[val_len - 1] == 0)
-				return *(new BigInteger(val, val_len - 1, val_len, false));
-			else
-				return *(new BigInteger(val, val_len, false));
+			_sum(this->value, this->size, b.value, b.size, &out, &out_size, &out_real_size);
 		}
 		else if (!this->isNegate && b.isNegate) {
-			size_p* val = _sub(this->value, this->size, b.value, b.size);
-			size_v val_len = (this->size > b.size ? this->size : b.size) + 1;
-			if (val[val_len - 1] == 0)
-				return *(new BigInteger(val, val_len - 1, val_len, false));
+			_sub(this->value, this->size, b.value, b.size, &out, &out_size, &out_real_size);
+			if (out[out_size - 1] == 0)
+				out_size--;
 			else {
-				while (val[val_len - 1] > BigInteger::max_size_of_part) val[val_len - 1] += BigInteger::max_size_of_part;
-				return *(new BigInteger(val, val_len, true));
+				while (out[out_size - 1] > BigInteger::max_size_of_part) out[out_size - 1] += BigInteger::max_size_of_part;
+				isNegate = true;
 			}
 		}
 		else if (this->isNegate && !b.isNegate) {
-			size_p* val = _sub(b.value, b.size, this->value, this->size);
-			size_v val_len = (this->size > b.size ? this->size : b.size) + 1;
-			if (val[val_len - 1] == 0)
-				return *(new BigInteger(val, val_len - 1, val_len, false));
-			else {
-				while (val[val_len - 1] > BigInteger::max_size_of_part) val[val_len - 1] += BigInteger::max_size_of_part;
-				return *(new BigInteger(val, val_len, true));
+			_sub(this->value, this->size, b.value, b.size, &out, &out_size, &out_real_size);
+			if (out[out_size - 1] == 0) {
+				out_size--;
+				isNegate = true;
+			} else {
+				while (out[out_size - 1] > BigInteger::max_size_of_part) out[out_size - 1] += BigInteger::max_size_of_part;
+				
 			}
 		}
 		else if (this->isNegate && b.isNegate) {
-			size_p* val = _sum(this->value, this->size, b.value, b.size);
-			size_v val_len = (this->size > b.size ? this->size : b.size) + 1;
-			if (val[val_len - 1] == 0)
-				return *(new BigInteger(val, val_len - 1, val_len, true));
-			else
-				return *(new BigInteger(val, val_len, true));
+			_sum(this->value, this->size, b.value, b.size, &out, &out_size, &out_real_size);
+			isNegate = true;
 		}
-		else return *(new BigInteger());
+		else return BigInteger();
+
+		return BigInteger(out, out_size, out_real_size, isNegate);
+	}
+
+	BigInteger BigInteger::operator - (const BigInteger& b) {
+		if (this->size < 1 || b.size < 1) return BigInteger();
+
+		size_p* out = 0;
+		size_v out_size = 0;
+		size_v out_real_size = 0;
+		bool isNegate = false;
+		if (!this->isNegate && !b.isNegate) {
+			_sub(this->value, this->size, b.value, b.size, &out, &out_size, &out_real_size);
+			if (out[out_size - 1] == 0)
+				out_size--;
+			else {
+				while (out[out_size - 1] > BigInteger::max_size_of_part) out[out_size - 1] += BigInteger::max_size_of_part;
+				isNegate = true;
+			}
+		}
+		else if (!this->isNegate && b.isNegate) {
+			_sum(this->value, this->size, b.value, b.size, &out, &out_size, &out_real_size);
+		}
+		else if (this->isNegate && !b.isNegate) {
+			_sum(this->value, this->size, b.value, b.size, &out, &out_size, &out_real_size);
+		}
+		else if (this->isNegate && b.isNegate) {
+			_sub(this->value, this->size, b.value, b.size, &out, &out_size, &out_real_size);
+			if (out[out_size - 1] == 0) {
+				out_size--;
+				isNegate = true;
+			}
+			else {
+				while (out[out_size - 1] > BigInteger::max_size_of_part) out[out_size - 1] += BigInteger::max_size_of_part;
+			}
+		}
+		else return BigInteger();
+
+		return BigInteger(out, out_size, out_real_size, isNegate);
 	}
 
 	BigInteger& BigInteger::operator = (const BigInteger& b) {
@@ -217,24 +291,31 @@ namespace livelib {
 		return *this;
 	}
 
-	std::string& BigInteger::toString() {
+	std::string BigInteger::toString() {
 
 		std::stringstream* ret = new std::stringstream();
 		if (this->size < 0) *ret << "NaN";
 		else {
 
-			if (this->isNegate) *ret << "-";
+			if (this->isNegate && (this->size > 1 || this->value[0] != 0)) *ret << "-";
 
+			size_p number = 0;
 			for (size_v i = 0; i < this->size; i++) {
-				std::string tmp = std::to_string(this->value[this->size - i - 1]);
-				while (tmp.length() < BigInteger::max_length_of_part && i != 0) tmp = "0" + tmp;
-				*ret << tmp;
-			}
-		}
+				size_p tmp = this->value[this->size - i - 1] + number;
+				number = tmp / BigInteger::max_dec_size_of_part;
+				tmp = tmp % BigInteger::max_dec_size_of_part;
 
-		std::string* _ret = new std::string(ret->str());
+				std::string add = std::to_string(tmp);
+				if (add.length() < (BigInteger::max_length_of_part - 1))
+					while (add.length() < BigInteger::max_length_of_part && i != 0) add = "0" + add;
+				*ret << add;
+			}
+
+			if (number > 0) *ret << number;
+		}
+		std::string _ret = std::string(ret->str());
 		delete ret;
-		return *_ret;
+		return _ret;
 	}
 
 	bool BigInteger::operator < (const BigInteger& b) {
@@ -293,13 +374,18 @@ namespace livelib {
 		return this->size == 0;
 	}
 
-	BigInteger& BigInteger::random(size_v length = 20){
+	BigInteger BigInteger::random(size_v length = 20){
 		std::srand(std::time(NULL));
-		std::string ret;
-		while (ret.length() < length) {
-			ret.append(std::to_string(rand()));
-		}
 
-		return *(new BigInteger(ret.substr(0, length)));
+		std::stringstream ret;
+		size_v number_length = 0;
+
+		while (number_length < length) {
+			std::string tmp = std::to_string(rand());
+			number_length += tmp.length();
+			ret << tmp;
+		}
+		std::string _ret = ret.str().substr(0, length);
+		return BigInteger(_ret);
 	}
 };
