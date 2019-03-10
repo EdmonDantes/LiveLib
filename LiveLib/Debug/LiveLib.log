@@ -1,25 +1,8 @@
 ﻿  BigInteger.cpp
-c:\users\masa_\source\repos\livelib\livelib\biginteger.cpp(14): error C2511: livelib::BigInteger::BigInteger(livelib::size_p *,livelib::size_v,bool): перегруженная функция-член не найдена в "livelib::BigInteger"
-  c:\users\masa_\source\repos\livelib\livelib\biginteger.h(13): note:  см. объявление "livelib::BigInteger"
-c:\users\masa_\source\repos\livelib\livelib\biginteger.cpp(15): error C2671: livelib::BigInteger::{ctor}: статические функции-члены не имеют указателей "this"
-c:\users\masa_\source\repos\livelib\livelib\biginteger.cpp(16): error C2671: livelib::BigInteger::{ctor}: статические функции-члены не имеют указателей "this"
-c:\users\masa_\source\repos\livelib\livelib\biginteger.cpp(17): error C2671: livelib::BigInteger::{ctor}: статические функции-члены не имеют указателей "this"
-c:\users\masa_\source\repos\livelib\livelib\biginteger.cpp(27): error C2511: livelib::size_p *livelib::BigInteger::_sum(livelib::size_p *,livelib::size_v,livelib::size_p *,livelib::size_v): перегруженная функция-член не найдена в "livelib::BigInteger"
-  c:\users\masa_\source\repos\livelib\livelib\biginteger.h(13): note:  см. объявление "livelib::BigInteger"
-c:\users\masa_\source\repos\livelib\livelib\biginteger.cpp(53): error C2511: livelib::size_p *livelib::BigInteger::_sub(livelib::size_p *,livelib::size_v,livelib::size_p *,livelib::size_v): перегруженная функция-член не найдена в "livelib::BigInteger"
-  c:\users\masa_\source\repos\livelib\livelib\biginteger.h(13): note:  см. объявление "livelib::BigInteger"
-c:\users\masa_\source\repos\livelib\livelib\biginteger.cpp(130): warning C4018: <: несоответствие типов со знаком и без знака
-c:\users\masa_\source\repos\livelib\livelib\biginteger.cpp(134): warning C4244: +=: преобразование "double" в "livelib::size_p", возможна потеря данных
-c:\users\masa_\source\repos\livelib\livelib\biginteger.cpp(152): warning C4018: <: несоответствие типов со знаком и без знака
-c:\users\masa_\source\repos\livelib\livelib\biginteger.cpp(157): warning C4244: +=: преобразование "double" в "livelib::size_p", возможна потеря данных
-c:\users\masa_\source\repos\livelib\livelib\biginteger.cpp(165): error C2660: livelib::BigInteger::_sum: функция не принимает 4 аргументов
-  c:\users\masa_\source\repos\livelib\livelib\biginteger.h(41): note:  см. объявление "livelib::BigInteger::_sum"
-c:\users\masa_\source\repos\livelib\livelib\biginteger.cpp(173): error C2660: livelib::BigInteger::_sub: функция не принимает 4 аргументов
-  c:\users\masa_\source\repos\livelib\livelib\biginteger.h(50): note:  см. объявление "livelib::BigInteger::_sub"
-c:\users\masa_\source\repos\livelib\livelib\biginteger.cpp(183): error C2660: livelib::BigInteger::_sub: функция не принимает 4 аргументов
-  c:\users\masa_\source\repos\livelib\livelib\biginteger.h(50): note:  см. объявление "livelib::BigInteger::_sub"
-c:\users\masa_\source\repos\livelib\livelib\biginteger.cpp(193): error C2660: livelib::BigInteger::_sum: функция не принимает 4 аргументов
-  c:\users\masa_\source\repos\livelib\livelib\biginteger.h(41): note:  см. объявление "livelib::BigInteger::_sum"
-c:\users\masa_\source\repos\livelib\livelib\biginteger.cpp(297): warning C4244: аргумент: преобразование "time_t" в "unsigned int", возможна потеря данных
-  Main.cpp
-  Создание кода...
+c:\users\masa_\source\repos\livelib\livelib\biginteger.cpp(254): warning C4018: <: несоответствие типов со знаком и без знака
+c:\users\masa_\source\repos\livelib\livelib\biginteger.cpp(255): warning C4244: инициализация: преобразование "double" в "livelib::size_p", возможна потеря данных
+c:\users\masa_\source\repos\livelib\livelib\biginteger.cpp(263): warning C4244: =: преобразование "double" в "livelib::size_p", возможна потеря данных
+c:\users\masa_\source\repos\livelib\livelib\biginteger.cpp(292): warning C4244: инициализация: преобразование "double" в "livelib::size_p", возможна потеря данных
+c:\users\masa_\source\repos\livelib\livelib\biginteger.cpp(300): warning C4244: =: преобразование "double" в "livelib::size_p", возможна потеря данных
+c:\users\masa_\source\repos\livelib\livelib\biginteger.cpp(491): warning C4244: аргумент: преобразование "time_t" в "unsigned int", возможна потеря данных
+  LiveLib.vcxproj -> C:\Users\masa_\source\repos\LiveLib\Debug\LiveLib.exe

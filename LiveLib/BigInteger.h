@@ -11,20 +11,14 @@ Please email dantes2104@gmail.com if you would like permission to do something w
 
 namespace livelib {
 	class BigInteger {
-	private:
+	protected:
 #ifdef _X64
-		const static size_p max_size_of_part = 0xfffffff;
-		const static length_p max_length_of_part = 10;
-		const static length_p bit_shift = 32;
-		
+		const static size_p max_size_of_part = 1000000000;
+		const static length_p max_length_of_part = 9;
 #else
-		const static size_p max_size_of_part = 0xffff;
-		const static length_p max_length_of_part = 5;
-		const static length_p bit_shift = 16;
+		const static size_p max_size_of_part = 10000;
+		const static length_p max_length_of_part = 4;
 #endif
-
-		static size_p max_dec_size_of_part;
-
 		size_p* value = 0; // Array for save data about number
 		size_v size = 0; // Number`s size
 		size_v real_size = 0; // Array`s size. For lesser use memory
@@ -34,20 +28,47 @@ namespace livelib {
 
 		/*
 			_sum(a, a_len, b, b_len)
-			Added number @a with length @a_len and number @b with length @b_len
-			@a_len and @b_len must be > 0
-			Return number with length = max(@a_len, @b_len) + 1
+			Added number @a with size @a_size and number @b with size @b_size
+			@a_size and @b_size must be > 0
+			Write result to @out with size @out_size with real size @out_real_size
+			Return number with size = max(@a_size, @b_size) + 1
+
+			Algorith complexity = O(n); n = max(@a_size, @b_size)
 		*/
 		static void _sum(size_p* a, size_v a_size, size_p* b, size_v b_size, size_p** out, size_v* out_size, size_v* out_real_size);
 
 		/*
 			_minus(a, a_len, b, b_len)
-			Substruct number @a with length @a_len and number @b with length @b_len
-			@a_len and @b_len must be > 0
-			Return number with length = max(@a_len, @b_len) + 1
-			If @a > @b return @a - @b else return @b - @a
+			Substruct number @a with size @a_size and number @b with size @b_size
+			@a_size and @b_size must be > 0
+			Write result to @out with size @out_size with real size @out_real_size
+			Return number with size = max(@a_size, @b_size) + 1
+
+			Algorith complexity = O(n); n = max(@a_size, @b_size)
 		*/
 		static void _sub(size_p* a, size_v a_size, size_p* b, size_v b_size, size_p** out, size_v* out_size, size_v* out_real_size);
+
+		/*
+			_multNative(a, a_len, b, b_len)
+			Multiply number @a with size @a_size and number @b with size @b_size
+			@a_size and @b_size must be > 0
+			Write result to @out with size @out_size with real size @out_real_size
+			Return number with size = @a_size + @b_size + 1
+
+			Algorith complexity = O(n * m); n = @a_size; m = @b_size
+		*/
+		static void _multStandart(size_p* a, size_v a_size, size_p* b, size_v b_size, size_p** out, size_v* out_size, size_v* out_real_size);
+
+		/*
+			_multKarab(a, a_len, b, b_len)
+			Multiply number @a with size @a_size and number @b with size @b_size
+			@a_size and @b_size must be > 0
+			Write result to @out with size @out_size with real size @out_real_size
+			Return number with size = @a_size + @b_size + 1
+
+			Algorith complexity = O(n^(log_2(3))); n = max(@a_size, @b_size);
+		*/
+		static void _multKarab(size_p* a, size_v a_size, size_p* b, size_v b_size, size_p** out, size_v* out_size, size_v* out_real_size);
 
 	public:
 		BigInteger(); // Create NaN number
@@ -64,9 +85,9 @@ namespace livelib {
 		// Arithmetic operators
 		BigInteger operator + (const BigInteger&);
 		BigInteger operator - (const BigInteger&);
-		BigInteger& operator * (const BigInteger&);
-		BigInteger& operator / (const BigInteger&);
-		BigInteger& operator % (const BigInteger&);
+		BigInteger operator * (const BigInteger&);
+		BigInteger operator / (const BigInteger&);
+		BigInteger operator % (const BigInteger&);
 		BigInteger& operator += (const BigInteger&);
 		BigInteger& operator -= (const BigInteger&);
 		BigInteger& operator *= (const BigInteger&);

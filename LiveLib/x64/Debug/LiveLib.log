@@ -1,2 +1,9 @@
-﻿  Main.cpp
+﻿  BigInteger.cpp
+c:\users\masa_\source\repos\livelib\livelib\biginteger.cpp(14): warning C4244: инициализация: преобразование "double" в "livelib::size_p", возможна потеря данных
+c:\users\masa_\source\repos\livelib\livelib\biginteger.cpp(182): warning C4244: инициализация: преобразование "double" в "livelib::size_p", возможна потеря данных
+c:\users\masa_\source\repos\livelib\livelib\biginteger.cpp(190): warning C4244: =: преобразование "double" в "livelib::size_p", возможна потеря данных
+c:\users\masa_\source\repos\livelib\livelib\biginteger.cpp(204): warning C4267: инициализация: преобразование из "size_t" в "int"; возможна потеря данных
+c:\users\masa_\source\repos\livelib\livelib\biginteger.cpp(219): warning C4244: инициализация: преобразование "double" в "livelib::size_p", возможна потеря данных
+c:\users\masa_\source\repos\livelib\livelib\biginteger.cpp(227): warning C4244: =: преобразование "double" в "livelib::size_p", возможна потеря данных
+c:\users\masa_\source\repos\livelib\livelib\biginteger.cpp(422): warning C4244: аргумент: преобразование "time_t" в "unsigned int", возможна потеря данных
   LiveLib.vcxproj -> C:\Users\masa_\source\repos\LiveLib\x64\Debug\LiveLib.exe
