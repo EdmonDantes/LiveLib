@@ -6,8 +6,10 @@ Please email dantes2104@gmail.com if you would like permission to do something w
 #include <iostream>
 #include <chrono>
 #include "BigInteger.h"
+#include <fstream>
 using namespace livelib;
 using namespace std;
+
 int main() {
 	/*BigInteger a = BigInteger::random(4000000);
 	BigInteger b = BigInteger::random(4000000);
@@ -36,21 +38,21 @@ int main() {
 	//cout << c.toString() << "\n";
 
 
-	BigInteger a0 = BigInteger("99999999999999999999");
-	BigInteger b0 = BigInteger("-99999999999999999999");
+	BigInteger a0 = BigInteger::random(3200);
+	BigInteger b0 = BigInteger::random(3200);
 
-	int index = 0;
-	while (index++ < 100)
-		BigInteger test = a0 + b0;
+	auto s0 = getTime();
+	//BigInteger c0 = a0.mult(b0, STD_MULT);
+	auto e0 = getTime();
 
+	auto s1 = getTime();
+	BigInteger c1 = a0.mult(b0, KABYC_MULT);
+	auto e1 = getTime();
 
+	//cout << (c0 == c1) << '\n';
 
-	auto s = getTime();
-	BigInteger c0 = a0 * b0;
-
-	auto e = getTime();
-
-	cout << c0.toString() << "\n" << getTimeN(s, e) << "\n";
+	cout << "Time #0: " << getTimeM(s0, e0) << '\n';
+	cout << "Time #1: " << getTimeM(s1, e1) << '\n';
 	system("pause");
 	return 0;
 }

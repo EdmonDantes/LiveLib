@@ -9,8 +9,19 @@ Please email dantes2104@gmail.com if you would like permission to do something w
 #ifndef __BigInteger_LL__
 #define __BigInteger_LL__
 
+#define STD_SUM 0
+#define STD_SUB 1
+
+#define STD_MULT 2
+#define KABYC_MULT 3
+
+//#define STD_DIV 4
+
 namespace livelib {
 	class BigInteger {
+	private:
+		static void static_block();
+		static bool null_var_for_static_block;
 	protected:
 #ifdef _X64
 		const static size_p max_size_of_part = 1000000000;
@@ -68,7 +79,7 @@ namespace livelib {
 
 			Algorith complexity = O(n^(log_2(3))); n = max(@a_size, @b_size);
 		*/
-		static void _multKarab(size_p* a, size_v a_size, size_p* b, size_v b_size, size_p** out, size_v* out_size, size_v* out_real_size);
+		static void _multInMiddle(size_p* a, size_v a_size, size_p* b, size_v b_size, size_p** out, size_v* out_size, size_v* out_real_size);
 
 	public:
 		BigInteger(); // Create NaN number
@@ -80,6 +91,11 @@ namespace livelib {
 		BigInteger(const char*);
 
 		~BigInteger();
+
+		BigInteger sum(const BigInteger&, int type);
+		BigInteger sub(const BigInteger&, int type);
+		BigInteger mult(const BigInteger&, int type);
+		BigInteger div(const BigInteger&, int type);
 		
 
 		// Arithmetic operators

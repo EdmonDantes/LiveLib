@@ -11,6 +11,12 @@ namespace livelib {
 
 	//------------------Protected Section------------\\
 
+	bool BigInteger::null_var_for_static_block = (BigInteger::static_block(), true);
+	
+	void BigInteger::static_block() {
+		std::srand(std::time(NULL));
+	}
+
 	BigInteger::BigInteger(size_p* value, size_v size, size_v real_size, bool isNegate = false) {
 		this->value = value;
 		this->size = size;
@@ -78,7 +84,7 @@ namespace livelib {
 			_out[i] += a[i] - b[i];
 			_out[i + 1] = 0;
 
-			while (_out[i] > BigInteger::max_size_of_part) {
+			while (_out[i] < 0){
 				_out[i + 1] -= 1;
 				_out[i] += BigInteger::max_size_of_part;
 			}
@@ -89,7 +95,7 @@ namespace livelib {
 			else _out[i] += a[i];
 			_out[i + 1] = 0;
 
-			while (_out[i] > BigInteger::max_size_of_part) {
+			while (_out[i] < 0) {
 				_out[i + 1] -= 1;
 				_out[i] += BigInteger::max_size_of_part;
 			}
@@ -136,28 +142,10 @@ namespace livelib {
 		*out_size = size;
 	}
 
-	void BigInteger::_multKarab(size_p* a, size_v a_size, size_p* b, size_v b_size, size_p** out, size_v* out_size, size_v* out_real_size) {
+	void BigInteger::_multInMiddle(size_p* a, size_v a_size, size_p* b, size_v b_size, size_p** out, size_v* out_size, size_v* out_real_size) {
 		size_v max_size = a_size > b_size ? a_size : b_size;
-		size_p* _a;
-		size_p* _b;
-		
-		if (a_size != max_size) {
-			_a = new size_p[max_size];
-			for (size_v i = 0; i < max_size; i++) {
-				if (i < a_size) _a[i] = a[i];
-				else _a[i] = 0;
-			}
-		} else _a = a;
-		
-		if (b_size != max_size) {
-			_b = new size_p[max_size];
-			for (size_v i = 0; i < max_size; i++) {
-				if (i < b_size) _b[i] = b[i];
-				else _b[i] = 0;
-			}
-		} else _b = b;
 
-		if (max_size < 4) return _multStandart(a, a_size, b, b_size, out, out_size, out_real_size);
+		if (max_size <= 325) return _multStandart(a, a_size, b, b_size, out, out_size, out_real_size);
 
 		size_v middle = max_size / 2;
 		
@@ -165,21 +153,26 @@ namespace livelib {
 		size_p* A2 = new size_p[max_size - middle];
 		size_p* B1 = new size_p[middle];
 		size_p* B2 = new size_p[max_size - middle];
-		
-		memcpy(A1, _a, middle);
-		memcpy(A2, _a + middle, max_size - middle);
-		memcpy(B1, _b, middle);
-		memcpy(B2, _b + middle, max_size - middle);
+
+		for (int i = 0; i < max_size - middle; i++) {
+			A2[i] = i < a_size ? a[i] : 0;
+			B2[i] = i < b_size ? b[i] : 0;
+		}
+
+		for (int i = 0; i < middle; i++) {
+			A1[i] = (i + middle < a_size ? a[i + middle] : 0);
+			B1[i] = (i + middle < b_size ? b[i + middle] : 0);
+		}
 		
 		size_p* P1;
-		size_p P1_size;
-		size_p P1_real_size;
-		_multKarab(A1, middle, B1, middle, &P1, &P1_size, &P1_real_size);
+		size_v P1_size;
+		size_v P1_real_size;
+		_multInMiddle(A1, middle, B1, middle, &P1, &P1_size, &P1_real_size);
 		
 		size_p* P2;
-		size_p P2_size;
-		size_p P2_real_size;
-		_multKarab(A2, max_size - middle, B2, max_size - middle, &P2, &P2_size, &P2_real_size);
+		size_v P2_size;
+		size_v P2_real_size;
+		_multInMiddle(A2, max_size - middle, B2, max_size - middle, &P2, &P2_size, &P2_real_size);
 		
 		size_p* Xlr = new size_p[middle];
 		size_p* Ylr = new size_p[middle];
@@ -190,12 +183,14 @@ namespace livelib {
 		}
 		
 		size_p* P3;
-		size_p P3_size;
-		size_p P3_real_size;
-		_multKarab(Xlr, middle, Ylr, middle, &P3, &P3_size, &P3_real_size);
+		size_v P3_size;
+		size_v P3_real_size;
+		_multInMiddle(Xlr, middle, Ylr, middle, &P3, &P3_size, &P3_real_size);
 		
 		*out = new size_p[2 * max_size];
-		
+
+
+
 		for (size_v i = 0; i < max_size; i++) {
 			(*out)[i] = i < P2_size ? P2[i] : 0;
 		}
@@ -211,9 +206,25 @@ namespace livelib {
 		
 		*out_size = *out_real_size = 2 * max_size;
 		for (size_v i = 0; i < *out_size - 1; i++) {
-			(*out)[i + 1] += (*out)[i] / BigInteger::max_length_of_part;
-			(*out)[i] = (*out)[i] % BigInteger::max_length_of_part;
+			while ((*out)[i] < 0) {
+				(*out)[i + 1] -= 1;
+				(*out)[i] += BigInteger::max_size_of_part;
+			}
+			(*out)[i + 1] += (*out)[i] / BigInteger::max_size_of_part;
+			(*out)[i] = (*out)[i] % BigInteger::max_size_of_part;
 		}
+
+		while ((*out)[(*out_size) - 1] == 0) (*out_size)--;
+
+		delete[] A1;
+		delete[] A2;
+		delete[] B1;
+		delete[] B2;
+		delete[] P1;
+		delete[] P2;
+		delete[] P3;
+		delete[] Xlr;
+		delete[] Ylr;
 	}
 
 
@@ -314,85 +325,113 @@ namespace livelib {
 		if (this->value != 0) delete[] this->value;
 	}
 
-	BigInteger BigInteger::operator + (const BigInteger& b) {
+	BigInteger BigInteger::sum(const BigInteger& b, int type) {
+		switch (type) {
+		default:
+			if (this->size < 1 || b.size < 1) return BigInteger();
+
+			size_p* out = 0;
+			size_v out_size = 0;
+			size_v out_real_size = 0;
+			bool isNegate = false;
+
+			if (!this->isNegate && !b.isNegate) {
+				_sum(this->value, this->size, b.value, b.size, &out, &out_size, &out_real_size);
+			}
+			else if (!this->isNegate && b.isNegate) {
+				_sub(this->value, this->size, b.value, b.size, &out, &out_size, &out_real_size);
+				if (out[out_size - 1] > BigInteger::max_size_of_part) {
+					isNegate = true;
+					out_size--;
+				}
+				while (out[out_size - 1] == 0) out_size--;
+			}
+			else if (this->isNegate && !b.isNegate) {
+				_sub(this->value, this->size, b.value, b.size, &out, &out_size, &out_real_size);
+				if (out[out_size - 1] <= BigInteger::max_size_of_part) {
+					isNegate = true;
+					out_size--;
+				}
+				while (out[out_size - 1] == 0) out_size--;
+			}
+			else if (this->isNegate && b.isNegate) {
+				_sum(this->value, this->size, b.value, b.size, &out, &out_size, &out_real_size);
+				isNegate = true;
+			}
+			else return BigInteger();
+
+			return BigInteger(out, out_size, out_real_size, isNegate);
+			break;
+		}
+	} 
+
+	BigInteger BigInteger::sub(const BigInteger& b, int type) {
+		switch (type) {
+		default:
+			if (this->size < 1 || b.size < 1) return BigInteger();
+
+			size_p* out = 0;
+			size_v out_size = 0;
+			size_v out_real_size = 0;
+			bool isNegate = false;
+			if (!this->isNegate && !b.isNegate) {
+				_sub(this->value, this->size, b.value, b.size, &out, &out_size, &out_real_size);
+				if (out[out_size - 1] > BigInteger::max_size_of_part) {
+					isNegate = true;
+					out_size--;
+				}
+				while (out[out_size - 1] == 0) out_size--;
+			}
+			else if (!this->isNegate && b.isNegate) {
+				_sum(this->value, this->size, b.value, b.size, &out, &out_size, &out_real_size);
+			}
+			else if (this->isNegate && !b.isNegate) {
+				_sum(this->value, this->size, b.value, b.size, &out, &out_size, &out_real_size);
+			}
+			else if (this->isNegate && b.isNegate) {
+				_sub(this->value, this->size, b.value, b.size, &out, &out_size, &out_real_size);
+				if (out[out_size - 1] <= BigInteger::max_size_of_part) {
+					isNegate = true;
+					out_size--;
+				}
+				while (out[out_size - 1] == 0) out_size--;
+			}
+			else 
+				return BigInteger();
+
+			return BigInteger(out, out_size, out_real_size, isNegate);
+			break;
+		}
+	}
+
+	BigInteger BigInteger::mult(const BigInteger& b, int type) {
 		if (this->size < 1 || b.size < 1) return BigInteger();
-		
+
 		size_p* out = 0;
 		size_v out_size = 0;
 		size_v out_real_size = 0;
-		bool isNegate = false;
+		switch (type) {
+		case KABYC_MULT:
+			_multInMiddle(this->value, this->size, b.value, b.size, &out, &out_size, &out_real_size);
+			break;
+		default:
+			_multStandart(this->value, this->size, b.value, b.size, &out, &out_size, &out_real_size);
+			break;
+		}
 
-		if (!this->isNegate && !b.isNegate) {
-			_sum(this->value, this->size, b.value, b.size, &out, &out_size, &out_real_size);
-		}
-		else if (!this->isNegate && b.isNegate) {
-			_sub(this->value, this->size, b.value, b.size, &out, &out_size, &out_real_size);
-			if (out[out_size - 1] > BigInteger::max_size_of_part) {
-				isNegate = true;
-				out_size--;
-			}
-			while (out[out_size - 1] == 0) out_size--;
-		}
-		else if (this->isNegate && !b.isNegate) {
-			_sub(this->value, this->size, b.value, b.size, &out, &out_size, &out_real_size);
-			if (out[out_size - 1] <= BigInteger::max_size_of_part) {
-				isNegate = true;
-				out_size--;
-			}
-			while (out[out_size - 1] == 0) out_size--;
-		}
-		else if (this->isNegate && b.isNegate) {
-			_sum(this->value, this->size, b.value, b.size, &out, &out_size, &out_real_size);
-			isNegate = true;
-		}
-		else return BigInteger();
+		return BigInteger(out, out_size, out_real_size, this->isNegate != b.isNegate);
+	}
 
-		return BigInteger(out, out_size, out_real_size, isNegate);
+	BigInteger BigInteger::operator + (const BigInteger& b) {
+		return sum(b, STD_SUM);
 	}
 
 	BigInteger BigInteger::operator - (const BigInteger& b) {
-		if (this->size < 1 || b.size < 1) return BigInteger();
-
-		size_p* out = 0;
-		size_v out_size = 0;
-		size_v out_real_size = 0;
-		bool isNegate = false;
-		if (!this->isNegate && !b.isNegate) {
-			_sub(this->value, this->size, b.value, b.size, &out, &out_size, &out_real_size);
-			if (out[out_size - 1] > BigInteger::max_size_of_part) {
-				isNegate = true;
-				out_size--;
-			}
-			while (out[out_size - 1] == 0) out_size--;
-		}
-		else if (!this->isNegate && b.isNegate) {
-			_sum(this->value, this->size, b.value, b.size, &out, &out_size, &out_real_size);
-		}
-		else if (this->isNegate && !b.isNegate) {
-			_sum(this->value, this->size, b.value, b.size, &out, &out_size, &out_real_size);
-		}
-		else if (this->isNegate && b.isNegate) {
-			_sub(this->value, this->size, b.value, b.size, &out, &out_size, &out_real_size);
-			if (out[out_size - 1] <= BigInteger::max_size_of_part) {
-				isNegate = true;
-				out_size--;
-			}
-			while (out[out_size - 1] == 0) out_size--;
-		}
-		else return BigInteger();
-
-		return BigInteger(out, out_size, out_real_size, isNegate);
+		return sub(b, STD_SUB);
 	}
 
 	BigInteger BigInteger::operator * (const BigInteger& b) {
-		if (this->size < 1 || b.size < 1) return BigInteger();
-
-		size_p* out = 0;
-		size_v out_size = 0;
-		size_v out_real_size = 0;
-		_multStandart(this->value, this->size, b.value, b.size, &out, &out_size, &out_real_size);
-
-		return BigInteger(out, out_size, out_real_size, this->isNegate != b.isNegate);
+		return mult(b, KABYC_MULT);
 	}
 
 	BigInteger& BigInteger::operator = (const BigInteger& b) {
@@ -488,8 +527,6 @@ namespace livelib {
 	}
 
 	BigInteger BigInteger::random(size_v length = 20){
-		std::srand(std::time(NULL));
-
 		std::stringstream ret;
 		size_v number_length = 0;
 
