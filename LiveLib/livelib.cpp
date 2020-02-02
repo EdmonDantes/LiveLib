@@ -1,4 +1,3 @@
 #include "livelib.h"
 
-namespace livelib {
-}
+namespace livelib {}
