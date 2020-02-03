@@ -118,6 +118,7 @@
     <ClInclude Include="array_util.h" />
     <ClInclude Include="BigInteger.h" />
     <ClInclude Include="bit_stream.h" />
+    <ClInclude Include="convert_util.h" />
     <ClInclude Include="livelib.h" />
     <ClInclude Include="LongNumber.h" />
     <ClInclude Include="NumberSystemConverter.h" />
@@ -126,6 +127,7 @@
   <ItemGroup>
     <ClCompile Include="BigInteger.cpp" />
     <ClCompile Include="bit_stream.cpp" />
+    <ClCompile Include="convert_util.cpp" />
     <ClCompile Include="livelib.cpp" />
     <ClCompile Include="LongNumber.cpp" />
     <ClCompile Include="Main.cpp" />

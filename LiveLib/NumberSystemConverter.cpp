@@ -2,39 +2,10 @@
 #include <cmath>
 #include "NumberSystemConverter.h"
 #include "array_util.h"
+#include "convert_util.h"
 
 namespace livelib {
 	namespace numsysconverter {
-		namespace convert_util {
-			uint8_t convert_util::charToUInt(char ch, uint8_t numberSystem) {
-				uint8_t result;
-				if (ch >= '0' && ch <= '9') {
-					result = ch - '0';
-				} else if (ch >= 'A' && ch <= 'Z') {
-					result = ch - 'A' + 10;
-				} else if (ch >= 'a' && ch <= 'z') {
-					result = ch - 'a' + 10;
-				}
-
-				if (result >= numberSystem) {
-					throw "Wrong character";
-				} else {
-					return result;
-				}
-			}
-
-			char UIntToChar(uint8_t number, uint8_t numberSystem) {
-				if (number >= numberSystem) {
-					throw "Wrong number";
-				} else {
-					if (number < 10) {
-						return '0' + number;
-					} else {
-						return 'A' + (number - 10);
-					}
-				}
-			}
-		}
 
 		const double ConvertConfig::e = 0.000001;
 
@@ -44,7 +15,7 @@ namespace livelib {
 
 			double tmp = log2(fromNumberSystem);
 			this->countOfBitsFromNS = ((uint8_t) tmp);
-			this->countOfBitsFromNS += (tmp - this->countOfBitsToNS > e ? 1 : 0);
+			this->countOfBitsFromNS += (tmp - this->countOfBitsFromNS > e ? 1 : 0);
 
 			tmp = log2(toNumberSystem);
 			this->countOfBitsToNS = ((uint8_t) tmp);
@@ -53,14 +24,17 @@ namespace livelib {
 		}
 
 		BitStream* convertTo(std::string number, ConvertConfig config) {
-			uint8_t* originalNumber = new uint8_t[number.length()];
+			BitStream originalNumber = BitStream(number.length() * config.countOfBitsFromNS);
+			double tmpSize = std::log(config.fromNumberSystem) / std::log(config.toNumberSystem) * number.length() * config.countOfBitsToNS;
 			BitStream* resultNumber = new BitStream(
-				std::log(config.fromNumberSystem) / std::log(config.toNumberSystem) * number.length() * config.countOfBitsToNS
+				(((uintmax) tmpSize) - tmpSize > ConvertConfig::e ? 1 : 0) + tmpSize
 			);
 
 			for (int i = 0; i < number.length(); i++) {
-				originalNumber[i] = convert_util::charToUInt(number[i], config.fromNumberSystem);
+				originalNumber.append(convert_util::charToUInt(number[i], config.fromNumberSystem), config.countOfBitsFromNS);
 			}
+
+			originalNumber.get(0, config.countOfBitsFromNS);
 
 			int startIndexOriginal = 0;
 			int endIndexOriginal = number.length();
@@ -69,11 +43,11 @@ namespace livelib {
 				unsigned short tmp = 0;
 				int i = startIndexOriginal;
 				for (; i < endIndexOriginal || tmp != 0 && i < number.length(); i++) {
-					tmp = tmp * config.fromNumberSystem + originalNumber[i];
-					originalNumber[i] = tmp / config.toNumberSystem;
+					tmp = tmp * config.fromNumberSystem + originalNumber.get(i, config.countOfBitsFromNS);
+					originalNumber.set(tmp / config.toNumberSystem, 0, config.countOfBitsFromNS, i, config.countOfBitsFromNS);
 					tmp %= config.toNumberSystem;
 
-					if (i == startIndexOriginal && originalNumber[i] == 0) {
+					if (i == startIndexOriginal && originalNumber.get(i, config.countOfBitsFromNS) == 0) {
 						startIndexOriginal++;
 					}
 
@@ -82,14 +56,12 @@ namespace livelib {
 					}
 				}
 
-				while (originalNumber[endIndexOriginal - 1] == 0 && endIndexOriginal > startIndexOriginal) {
+				while (originalNumber.get(endIndexOriginal - 1, config.countOfBitsFromNS) == 0 && endIndexOriginal > startIndexOriginal) {
 					endIndexOriginal--;
 				}
 
 				resultNumber->append(tmp, config.countOfBitsToNS);
 			}
-
-			delete[] originalNumber;
 			
 			return resultNumber;
 		}

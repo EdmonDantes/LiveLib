@@ -17,21 +17,27 @@ int main() {
 
 	srand(time(NULL));
 
-	ConvertConfig conf = ConvertConfig(10, 2);
+	ConvertConfig conf = ConvertConfig(2, 64);
 	std::string number = "";
 
-	for (int i = 0; i < 50; i++) {
-		number += (char) ((rand() % 9) + '0');
+
+	for (int j = 1000; j < 20000; j += 250) {
+
+		number = "";
+
+		for (int i = 0; i < j; i++) {
+			number += (char) ((rand() % 2) + '0');
+		}
+
+		auto s = getTime();
+		BitStream* bs = convertTo(number, conf);
+		auto e = getTime();
+
+		cout << j << " = " << getTimeMilli(s, e) << "\n";
 	}
 
-	auto s = getTime();
-	BitStream* bs = convertTo(number, conf);
-	auto e = getTime();
-
-	cout << getTimeMilli(s, e) << "\n\n\n\n";
-
-	cout << number << "\n\n";
-	cout << toString(bs, conf) << "\n\n";
+	//cout << number << "\n\n";
+	//cout << toString(bs, conf) << "\n\n";
 
 	system("pause");
 }

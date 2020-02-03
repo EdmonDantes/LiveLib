@@ -5,15 +5,9 @@
 namespace livelib {
 	namespace numsysconverter {
 
-		namespace convert_util {
-			uint8_t charToUInt(char ch, uint8_t numberSystem);
-			char UIntToChar(uint8_t number, uint8_t numberSystem);
-		}
-
 		struct ConvertConfig {
-		private:
-			static const double e;
 		public:
+			static const double e;
 			uint8_t fromNumberSystem;
 			uint8_t toNumberSystem;
 			uint8_t countOfBitsFromNS;
@@ -22,7 +16,15 @@ namespace livelib {
 			ConvertConfig(uint8_t fromNumberSystem, uint8_t toNumberSystem);
 		};
 		
-		
+		/*
+			Method for convert number from one number system to other
+			Convert number with size = n from a number system to b number system
+			k - computer coefficient
+			O(log(a) / log(b) * n * k) +- 3%
+			
+			Max number system 254
+			Recomend max number system 127
+		*/
 		BitStream* convertTo(std::string number, ConvertConfig config);
 		BitStream* convertTo(uintmax number, ConvertConfig config);
 

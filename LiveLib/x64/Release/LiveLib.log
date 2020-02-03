@@ -1,8 +1,1 @@
-﻿  Main.cpp
-c:\users\masa_\source\repos\livelib\livelib\main.cpp(18): warning C4244: аргумент: преобразование "time_t" в "unsigned int", возможна потеря данных
-  Создание кода
-  3 of 177 functions ( 1.7%) were compiled, the rest were copied from previous compilation.
-    0 functions were new in current compilation
-    1 functions had inline decision re-evaluated but remain unchanged
-  Создание кода завершено
-  LiveLib.vcxproj -> C:\Users\masa_\source\repos\LiveLib\x64\Release\LiveLib.exe
+﻿
