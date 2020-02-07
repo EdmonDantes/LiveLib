@@ -7,47 +7,48 @@
 namespace livelib {
 	namespace numsysconverter {
 
-		const double ConvertConfig::e = 0.000001;
+		NumberSystem::NumberSystem() {}
 
-		ConvertConfig::ConvertConfig(uint8_t fromNumberSystem, uint8_t toNumberSystem) {
-			this->fromNumberSystem = fromNumberSystem;
-			this->toNumberSystem = toNumberSystem;
+		NumberSystem::NumberSystem(uint16 numberSystem) {
+			this->numberSystem = numberSystem;
+			double tmp = log2(numberSystem);
+			this->countOfBits = (uint16) tmp;
+			this->countOfBits += (tmp - this->countOfBits > _LPL_MAX_PRECISION ? 1 : 0);
+		}
 
-			double tmp = log2(fromNumberSystem);
-			this->countOfBitsFromNS = ((uint8_t) tmp);
-			this->countOfBitsFromNS += (tmp - this->countOfBitsFromNS > e ? 1 : 0);
+		ConvertConfig::ConvertConfig(NumberSystem from, NumberSystem to) {
+			this->from = from;
+			this->to = to;
+		}
 
-			tmp = log2(toNumberSystem);
-			this->countOfBitsToNS = ((uint8_t) tmp);
-			this->countOfBitsToNS += (tmp - this->countOfBitsToNS > e ? 1 : 0);
-			
+		ConvertConfig::ConvertConfig(uint16 from, uint16 to) {
+			this->from = NumberSystem(from);
+			this->to = NumberSystem(to);
 		}
 
 		BitStream* convertTo(std::string number, ConvertConfig config) {
-			BitStream originalNumber = BitStream(number.length() * config.countOfBitsFromNS);
-			double tmpSize = std::log(config.fromNumberSystem) / std::log(config.toNumberSystem) * number.length() * config.countOfBitsToNS;
-			BitStream* resultNumber = new BitStream(
-				(((uintmax) tmpSize) - tmpSize > ConvertConfig::e ? 1 : 0) + tmpSize
-			);
+			uintmax numberLength = number.length();
 
-			for (int i = 0; i < number.length(); i++) {
-				originalNumber.append(convert_util::charToUInt(number[i], config.fromNumberSystem), config.countOfBitsFromNS);
+			BitStream originalNumber = BitStream(numberLength * config.from.countOfBits);
+			BitStream* resultNumber = new BitStream(numberLength * config.from.countOfBits);
+
+			const char* numberChars = number.c_str();
+			for (int i = 0; i < numberLength; i++) {
+				originalNumber.append(convert_util::charToUInt(numberChars[i], config.from.numberSystem), config.from.countOfBits);
 			}
 
-			originalNumber.get(0, config.countOfBitsFromNS);
-
 			int startIndexOriginal = 0;
-			int endIndexOriginal = number.length();
+			int endIndexOriginal = numberLength;
 
 			while (startIndexOriginal < endIndexOriginal) {
 				unsigned short tmp = 0;
-				int i = startIndexOriginal;
-				for (; i < endIndexOriginal || tmp != 0 && i < number.length(); i++) {
-					tmp = tmp * config.fromNumberSystem + originalNumber.get(i, config.countOfBitsFromNS);
-					originalNumber.set(tmp / config.toNumberSystem, 0, config.countOfBitsFromNS, i, config.countOfBitsFromNS);
-					tmp %= config.toNumberSystem;
+				uintmax i = startIndexOriginal;
+				for (; i < endIndexOriginal || tmp != 0 && i < numberLength; i++) {
+					tmp = tmp * config.from.numberSystem + originalNumber.get(i, config.from.countOfBits);
+					originalNumber.set(tmp / config.to.numberSystem, 0, config.from.countOfBits, i, config.from.countOfBits);
+					tmp %= config.to.numberSystem;
 
-					if (i == startIndexOriginal && originalNumber.get(i, config.countOfBitsFromNS) == 0) {
+					if (i == startIndexOriginal && originalNumber.get(i, config.from.countOfBits) == 0) {
 						startIndexOriginal++;
 					}
 
@@ -56,11 +57,11 @@ namespace livelib {
 					}
 				}
 
-				while (originalNumber.get(endIndexOriginal - 1, config.countOfBitsFromNS) == 0 && endIndexOriginal > startIndexOriginal) {
+				while (originalNumber.get(endIndexOriginal - 1, config.from.countOfBits) == 0 && endIndexOriginal > startIndexOriginal) {
 					endIndexOriginal--;
 				}
 
-				resultNumber->append(tmp, config.countOfBitsToNS);
+				resultNumber->append(tmp, config.to.countOfBits);
 			}
 			
 			return resultNumber;
@@ -72,11 +73,11 @@ namespace livelib {
 			return result;
 		}
 
-		std::string toString(BitStream * bs, ConvertConfig config) {
+		std::string toString(BitStream * bs, NumberSystem to) {
 			std::stringstream ss;
-			uintmax size = bs->getCountOfBits() / config.countOfBitsToNS;
+			uintmax size = bs->getCountOfBits() / to.countOfBits;
 			for (int i = size - 1; i > -1; i--) {
-				ss << convert_util::UIntToChar(bs->get(i, config.countOfBitsToNS), config.toNumberSystem);
+				ss << convert_util::UIntToChar(bs->get(i, to.countOfBits), to.numberSystem);
 			}
 			return ss.str();
 		}

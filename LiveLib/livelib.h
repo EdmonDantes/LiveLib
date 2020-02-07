@@ -76,6 +76,11 @@ namespace livelib {
 		typedef int64_t intmax;
 		#endif // _LPL_X64
 
+		#ifndef _LPL_MAX_PRECISION
+		#define _LPL_MAX_PRECISION 0.000000001
+		#endif // !_LPL_MAX_PRECISION
+
+
 
 		//------- Error block
 		static inline std::string createError(int code) {

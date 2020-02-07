@@ -10,7 +10,6 @@
 namespace livelib {
 
 	using namespace size_util;
-
 	inline uintmax BitStream::catValue(uintmax value, uint8 offset, uint8 length, uint8 endShift) {
 		if (length == 0 || offset == innerSize) {
 			return 0;
@@ -19,12 +18,14 @@ namespace livelib {
 		}
 	}
 
+
 	BitStream::BitStream() {
 		value = new uintmax[size = 16];
 		memset(value, 0, sizeof(uintmax) * 16);
 	}
+
 	BitStream::BitStream(uintmax countOfBits) {
-		size = size_util::divSize(countOfBits, innerSize) + (countOfBits % innerSize == 0 ? 0 : 1) + 16;
+		size = size_util::divSize(countOfBits, innerSize) + (countOfBits % innerSize == 0 ? 0 : 1);
 		value = new uintmax[size];
 		memset(value, 0, multSize(size, sizeof(uintmax)));
 	}
@@ -50,6 +51,7 @@ namespace livelib {
 				uintmax* tmp = array_util::addToEnd(value, size, size / 2);
 				delete[] value;
 				value = tmp;
+				memset(tmp + size, 0, size / 2 * sizeof(*tmp));
 				size += size / 2;
 			}
 		}
@@ -59,10 +61,10 @@ namespace livelib {
 	void BitStream::append(uintmax val, uint8_t offset, bool autoLength) {
 		if (autoLength) {
 			uint8_t length = multSize(8, sizeof(val));
-			uintmax checker = 1ull << subSize(length, 1);
+			uintmax checker = 1ull << (length - 1);
 			while (length > 0) {
 				if ((val & checker) == 0) {
-					length = subSize(length, 1);
+					length--;
 					checker = checker >> 1;
 				} else {
 					break;
@@ -97,10 +99,7 @@ namespace livelib {
 		uintmax indexValue = startBit / innerSize;
 		uintmax innerOffset = startBit % innerSize;
 		
-
-		if (indexValue > size 
-			|| indexValue == size && innerOffset > innerIndex
-			|| innerOffset + countOfBit > innerSize && indexValue + 1 >= size) {
+		if (indexValue >= size) {
 			throw createError(_LPL_ERROR_CODE_WRONG_ARGUMENT);
 		}
 
@@ -121,18 +120,20 @@ namespace livelib {
 
 	void BitStream::set(uintmax val, uint8 offset, uint8 length, uintmax index, uint8_t countOfBit) {
 
+		if (countOfBit > innerSize) {
+			throw createError(_LPL_ERROR_CODE_WRONG_ARGUMENT, "countOfBit is wrong. It must be < " + std::to_string(innerSize));
+		}
+
 		uintmax startBit = index * countOfBit;
 		uintmax indexValue = startBit / innerSize;
 		uintmax innerOffset = startBit % innerSize;
 
-		if (indexValue > size
-			|| indexValue == size && innerOffset > innerIndex
-			|| innerOffset + countOfBit > innerSize && indexValue + 1 >= size
-			|| length > countOfBit) {
+		if (indexValue >= size || length > countOfBit) {
 			throw createError(_LPL_ERROR_CODE_WRONG_ARGUMENT);
 		}
 
-		uintmax valSize = addSize(innerOffset, countOfBit);
+		uintmax valSize = innerOffset + countOfBit;
+
 		if (valSize <= innerSize) {
 			value[indexValue] = catValue(value[indexValue], 0, innerOffset, 0) | catValue(val, offset, length, innerOffset) | catValue(value[indexValue], valSize, innerSize, valSize);
 		} else {
@@ -174,6 +175,9 @@ namespace livelib {
 		return sizeof(size) * 8 * index + innerIndex;
 	}
 	uintmax* BitStream::getArray() {
+		return value;
+	}
+	uintmax * BitStream::toArray() {
 		return array_util::resize(value, size, size);
 	}
 	uint8_t* BitStream::getBytes() {

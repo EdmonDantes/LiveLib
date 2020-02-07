@@ -12,7 +12,6 @@ namespace livelib {
 		uint8_t innerIndex;
 
 		inline uintmax catValue(uintmax value, uint8 offset, uint8 length, uint8 endShift);
-
 	public:
 		BitStream();
 		BitStream(uintmax countOfBits);
@@ -32,8 +31,10 @@ namespace livelib {
 		void removeFromEnd(uintmax countOfBits);
 
 		uintmax getCountOfBits();
-		uintmax* getArray();
 		uint8_t* getBytes();
+
+		uintmax* getArray();
+		uintmax* toArray();
 
 		void operator << (uintmax val);
 

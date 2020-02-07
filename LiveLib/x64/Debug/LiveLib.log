@@ -1,27 +1,27 @@
-﻿  Main.cpp
-c:\users\masa_\source\repos\livelib\livelib\main.cpp(18): warning C4244: аргумент: преобразование "time_t" в "unsigned int", возможна потеря данных
-  NumberSystemConverter.cpp
-c:\users\masa_\source\repos\livelib\livelib\numbersystemconverter.cpp(30): warning C4244: аргумент: преобразование "double" в "livelib::uintmax", возможна потеря данных
-c:\users\masa_\source\repos\livelib\livelib\numbersystemconverter.cpp(40): warning C4267: инициализация: преобразование из "size_t" в "int"; возможна потеря данных
-c:\users\masa_\source\repos\livelib\livelib\numbersystemconverter.cpp(46): warning C4244: =: преобразование "livelib::uintmax" в "unsigned short", возможна потеря данных
-c:\users\masa_\source\repos\livelib\livelib\numbersystemconverter.cpp(78): warning C4244: инициализация: преобразование "livelib::uintmax" в "int", возможна потеря данных
-c:\users\masa_\source\repos\livelib\livelib\numbersystemconverter.cpp(79): warning C4244: аргумент: преобразование "livelib::uintmax" в "uint8_t", возможна потеря данных
-  bit_stream.cpp
-c:\users\masa_\source\repos\livelib\livelib\bit_stream.cpp(37): warning C4244: инициализация: преобразование "livelib::size_v" в "uint8_t", возможна потеря данных
-c:\users\masa_\source\repos\livelib\livelib\bit_stream.cpp(39): warning C4244: инициализация: преобразование "livelib::size_v" в "uint8_t", возможна потеря данных
-c:\users\masa_\source\repos\livelib\livelib\bit_stream.cpp(42): warning C4244: -=: преобразование "livelib::size_v" в "uint8_t", возможна потеря данных
-c:\users\masa_\source\repos\livelib\livelib\bit_stream.cpp(56): warning C4244: =: преобразование "livelib::size_v" в "uint8_t", возможна потеря данных
-c:\users\masa_\source\repos\livelib\livelib\bit_stream.cpp(60): warning C4244: инициализация: преобразование "livelib::size_v" в "uint8_t", возможна потеря данных
-c:\users\masa_\source\repos\livelib\livelib\bit_stream.cpp(64): warning C4244: =: преобразование "livelib::size_v" в "uint8_t", возможна потеря данных
+﻿  bit_stream.cpp
+c:\users\masa_\source\repos\livelib\livelib\bit_stream.cpp(44): warning C4244: -=: преобразование "livelib::size_v" в "uint8_t", возможна потеря данных
+c:\users\masa_\source\repos\livelib\livelib\bit_stream.cpp(63): warning C4244: инициализация: преобразование "livelib::size_v" в "uint8_t", возможна потеря данных
 c:\users\masa_\source\repos\livelib\livelib\bit_stream.cpp(107): warning C4244: аргумент: преобразование "livelib::uintmax" в "livelib::uint8", возможна потеря данных
 c:\users\masa_\source\repos\livelib\livelib\bit_stream.cpp(110): warning C4244: -=: преобразование "livelib::uintmax" в "uint8_t", возможна потеря данных
 c:\users\masa_\source\repos\livelib\livelib\bit_stream.cpp(114): warning C4244: аргумент: преобразование "livelib::size_v" в "livelib::uint8", возможна потеря данных
-c:\users\masa_\source\repos\livelib\livelib\bit_stream.cpp(136): warning C4244: аргумент: преобразование "livelib::uintmax" в "livelib::uint8", возможна потеря данных
 c:\users\masa_\source\repos\livelib\livelib\bit_stream.cpp(138): warning C4244: аргумент: преобразование "livelib::uintmax" в "livelib::uint8", возможна потеря данных
-c:\users\masa_\source\repos\livelib\livelib\bit_stream.cpp(139): warning C4244: аргумент: преобразование "livelib::size_v" в "livelib::uint8", возможна потеря данных
-c:\users\masa_\source\repos\livelib\livelib\bit_stream.cpp(152): warning C4244: инициализация: преобразование "livelib::size_v" в "int", возможна потеря данных
-c:\users\masa_\source\repos\livelib\livelib\bit_stream.cpp(163): warning C4244: -=: преобразование "livelib::uintmax" в "uint8_t", возможна потеря данных
-c:\users\masa_\source\repos\livelib\livelib\bit_stream.cpp(190): warning C4244: аргумент: преобразование "livelib::uintmax" в "uint8_t", возможна потеря данных
-c:\users\masa_\source\repos\livelib\livelib\bit_stream.cpp(194): warning C4244: аргумент: преобразование "livelib::uintmax" в "uint8_t", возможна потеря данных
+c:\users\masa_\source\repos\livelib\livelib\bit_stream.cpp(140): warning C4244: аргумент: преобразование "livelib::uintmax" в "livelib::uint8", возможна потеря данных
+c:\users\masa_\source\repos\livelib\livelib\bit_stream.cpp(141): warning C4244: аргумент: преобразование "livelib::size_v" в "livelib::uint8", возможна потеря данных
+c:\users\masa_\source\repos\livelib\livelib\bit_stream.cpp(154): warning C4244: инициализация: преобразование "livelib::size_v" в "int", возможна потеря данных
+c:\users\masa_\source\repos\livelib\livelib\bit_stream.cpp(165): warning C4244: -=: преобразование "livelib::uintmax" в "uint8_t", возможна потеря данных
+c:\users\masa_\source\repos\livelib\livelib\bit_stream.cpp(195): warning C4244: аргумент: преобразование "livelib::uintmax" в "uint8_t", возможна потеря данных
+c:\users\masa_\source\repos\livelib\livelib\bit_stream.cpp(199): warning C4244: аргумент: преобразование "livelib::uintmax" в "uint8_t", возможна потеря данных
+  Main.cpp
+c:\users\masa_\source\repos\livelib\livelib\main.cpp(22): warning C4244: аргумент: преобразование "time_t" в "unsigned int", возможна потеря данных
+c:\users\masa_\source\repos\livelib\livelib\main.cpp(49): warning C4244: аргумент: преобразование "livelib::uint16" в "uint8_t", возможна потеря данных
+  NumberSystemConverter.cpp
+c:\users\masa_\source\repos\livelib\livelib\numbersystemconverter.cpp(15): warning C4244: =: преобразование "livelib::uint16" в "livelib::uint8", возможна потеря данных
+c:\users\masa_\source\repos\livelib\livelib\numbersystemconverter.cpp(37): warning C4244: аргумент: преобразование "livelib::uint16" в "uint8_t", возможна потеря данных
+c:\users\masa_\source\repos\livelib\livelib\numbersystemconverter.cpp(41): warning C4244: инициализация: преобразование "livelib::uintmax" в "int", возможна потеря данных
+c:\users\masa_\source\repos\livelib\livelib\numbersystemconverter.cpp(47): warning C4244: =: преобразование "livelib::uintmax" в "unsigned short", возможна потеря данных
+c:\users\masa_\source\repos\livelib\livelib\numbersystemconverter.cpp(56): warning C4244: =: преобразование "livelib::uintmax" в "int", возможна потеря данных
+c:\users\masa_\source\repos\livelib\livelib\numbersystemconverter.cpp(79): warning C4244: инициализация: преобразование "livelib::uintmax" в "int", возможна потеря данных
+c:\users\masa_\source\repos\livelib\livelib\numbersystemconverter.cpp(80): warning C4244: аргумент: преобразование "livelib::uint16" в "uint8_t", возможна потеря данных
+c:\users\masa_\source\repos\livelib\livelib\numbersystemconverter.cpp(80): warning C4244: аргумент: преобразование "livelib::uintmax" в "uint8_t", возможна потеря данных
   Создание кода...
   LiveLib.vcxproj -> C:\Users\masa_\source\repos\LiveLib\x64\Debug\LiveLib.exe

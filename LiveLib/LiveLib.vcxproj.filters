@@ -56,9 +56,6 @@
     <ClCompile Include="NumberSystemConverter.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
-    <ClCompile Include="size_util.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
     <ClCompile Include="bit_stream.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
